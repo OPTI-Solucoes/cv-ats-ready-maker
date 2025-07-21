@@ -17,11 +17,6 @@ export const CVPreview = ({ data }: CVPreviewProps) => {
     return `${monthNames[parseInt(month) - 1]} ${year}`;
   };
 
-  const skillsByCategory = {
-    technical: data.skills.filter(skill => skill.category === 'technical'),
-    soft: data.skills.filter(skill => skill.category === 'soft'),
-    language: data.skills.filter(skill => skill.category === 'language')
-  };
 
   return (
     <Card className="w-full max-w-4xl mx-auto">
@@ -181,33 +176,33 @@ export const CVPreview = ({ data }: CVPreviewProps) => {
         )}
 
         {/* Skills */}
-        {data.skills.length > 0 && (
+        {(data.skills.technical || data.skills.soft || data.skills.language) && (
           <div className="mb-8">
             <h2 className="text-lg font-bold text-cv-section mb-4 uppercase tracking-wide">
               Habilidades
             </h2>
             <div className="space-y-3">
-              {skillsByCategory.technical.length > 0 && (
+              {data.skills.technical && (
                 <div>
                   <h3 className="font-semibold text-cv-section mb-2">Técnicas</h3>
                   <p className="text-cv-text">
-                    {skillsByCategory.technical.map(skill => skill.name).join(' • ')}
+                    {data.skills.technical.split(',').map(skill => skill.trim()).join(' • ')}
                   </p>
                 </div>
               )}
-              {skillsByCategory.soft.length > 0 && (
+              {data.skills.soft && (
                 <div>
                   <h3 className="font-semibold text-cv-section mb-2">Comportamentais</h3>
                   <p className="text-cv-text">
-                    {skillsByCategory.soft.map(skill => skill.name).join(' • ')}
+                    {data.skills.soft.split(',').map(skill => skill.trim()).join(' • ')}
                   </p>
                 </div>
               )}
-              {skillsByCategory.language.length > 0 && (
+              {data.skills.language && (
                 <div>
                   <h3 className="font-semibold text-cv-section mb-2">Idiomas</h3>
                   <p className="text-cv-text">
-                    {skillsByCategory.language.map(skill => skill.name).join(' • ')}
+                    {data.skills.language.split(',').map(skill => skill.trim()).join(' • ')}
                   </p>
                 </div>
               )}

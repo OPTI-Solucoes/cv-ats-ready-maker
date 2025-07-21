@@ -30,10 +30,10 @@ export interface Education {
   gpa?: string;
 }
 
-export interface Skill {
-  id: string;
-  name: string;
-  category: 'technical' | 'soft' | 'language';
+export interface SkillCategory {
+  technical: string;
+  soft: string;
+  language: string;
 }
 
 export interface CVData {
@@ -41,5 +41,5 @@ export interface CVData {
   summary: string;
   experience: Experience[];
   education: Education[];
-  skills: Skill[];
+  skills: SkillCategory;
 }

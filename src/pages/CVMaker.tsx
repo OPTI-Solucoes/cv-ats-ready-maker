@@ -21,7 +21,11 @@ const CVMaker = () => {
     summary: '',
     experience: [],
     education: [],
-    skills: []
+    skills: {
+      technical: '',
+      soft: '',
+      language: ''
+    }
   });
   const [activeView, setActiveView] = useState<'form' | 'preview'>('form');
 

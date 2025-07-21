@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
-import { CVData, Experience, Education, Skill } from '@/types/cv';
+import { CVData, Experience, Education, SkillCategory } from '@/types/cv';
 import { Plus, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -28,7 +28,11 @@ export const CVForm = ({ onDataChange }: CVFormProps) => {
     summary: '',
     experience: [],
     education: [],
-    skills: []
+    skills: {
+      technical: '',
+      soft: '',
+      language: ''
+    }
   });
 
   const updateData = (newData: Partial<CVData>) => {
@@ -88,25 +92,6 @@ export const CVForm = ({ onDataChange }: CVFormProps) => {
     updateData({ education: cvData.education.filter(edu => edu.id !== id) });
   };
 
-  const addSkill = () => {
-    const newSkill: Skill = {
-      id: Date.now().toString(),
-      name: '',
-      category: 'technical'
-    };
-    updateData({ skills: [...cvData.skills, newSkill] });
-  };
-
-  const updateSkill = (id: string, updates: Partial<Skill>) => {
-    const updatedSkills = cvData.skills.map(skill =>
-      skill.id === id ? { ...skill, ...updates } : skill
-    );
-    updateData({ skills: updatedSkills });
-  };
-
-  const removeSkill = (id: string) => {
-    updateData({ skills: cvData.skills.filter(skill => skill.id !== id) });
-  };
 
   const addArrayItem = (experienceId: string, field: 'responsibilities' | 'achievements' | 'technologies') => {
     const experience = cvData.experience.find(exp => exp.id === experienceId);
@@ -495,49 +480,84 @@ export const CVForm = ({ onDataChange }: CVFormProps) => {
         </TabsContent>
 
         <TabsContent value="skills" className="space-y-4">
-          <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold">Habilidades</h3>
-            <Button onClick={addSkill} variant="outline" size="sm">
-              <Plus className="w-4 h-4 mr-2" />
-              Adicionar
-            </Button>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {cvData.skills.map((skill) => (
-              <Card key={skill.id}>
-                <CardContent className="pt-4">
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <Label>Habilidade</Label>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => removeSkill(skill.id)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                    <Input
-                      value={skill.name}
-                      onChange={(e) => updateSkill(skill.id, { name: e.target.value })}
-                      placeholder="React, JavaScript, etc."
-                    />
-                    <Label>Categoria</Label>
-                    <select
-                      value={skill.category}
-                      onChange={(e) => updateSkill(skill.id, { category: e.target.value as 'technical' | 'soft' | 'language' })}
-                      className="w-full p-2 border border-input rounded-md"
-                    >
-                      <option value="technical">Técnica</option>
-                      <option value="soft">Comportamental</option>
-                      <option value="language">Idioma</option>
-                    </select>
+          <Card>
+            <CardHeader>
+              <CardTitle>Habilidades</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="technical-skills">Habilidades Técnicas</Label>
+                <Input
+                  id="technical-skills"
+                  value={cvData.skills.technical}
+                  onChange={(e) => updateData({
+                    skills: { ...cvData.skills, technical: e.target.value }
+                  })}
+                  placeholder="React, JavaScript, Python, SQL, Node.js (separados por vírgula)"
+                />
+                <p className="text-sm text-muted-foreground mt-1">
+                  Separe as habilidades por vírgula. Ex: React, JavaScript, Python
+                </p>
+                {cvData.skills.technical && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {cvData.skills.technical.split(',').map((skill, index) => (
+                      <span key={index} className="bg-primary/10 text-primary px-2 py-1 rounded-md text-sm">
+                        {skill.trim()}
+                      </span>
+                    ))}
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="soft-skills">Habilidades Comportamentais</Label>
+                <Input
+                  id="soft-skills"
+                  value={cvData.skills.soft}
+                  onChange={(e) => updateData({
+                    skills: { ...cvData.skills, soft: e.target.value }
+                  })}
+                  placeholder="Liderança, Comunicação, Trabalho em equipe (separados por vírgula)"
+                />
+                <p className="text-sm text-muted-foreground mt-1">
+                  Separe as habilidades por vírgula. Ex: Liderança, Comunicação
+                </p>
+                {cvData.skills.soft && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {cvData.skills.soft.split(',').map((skill, index) => (
+                      <span key={index} className="bg-secondary/50 text-secondary-foreground px-2 py-1 rounded-md text-sm">
+                        {skill.trim()}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="language-skills">Idiomas</Label>
+                <Input
+                  id="language-skills"
+                  value={cvData.skills.language}
+                  onChange={(e) => updateData({
+                    skills: { ...cvData.skills, language: e.target.value }
+                  })}
+                  placeholder="Português (nativo), Inglês (fluente), Espanhol (básico)"
+                />
+                <p className="text-sm text-muted-foreground mt-1">
+                  Separe os idiomas por vírgula, incluindo o nível. Ex: Inglês (fluente), Espanhol (básico)
+                </p>
+                {cvData.skills.language && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {cvData.skills.language.split(',').map((skill, index) => (
+                      <span key={index} className="bg-accent/50 text-accent-foreground px-2 py-1 rounded-md text-sm">
+                        {skill.trim()}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
