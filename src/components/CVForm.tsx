@@ -46,7 +46,10 @@ export const CVForm = ({ onDataChange }: CVFormProps) => {
       startDate: '',
       endDate: '',
       current: false,
-      description: ['']
+      challenge: '',
+      responsibilities: [''],
+      achievements: [''],
+      technologies: ['']
     };
     updateData({ experience: [...cvData.experience, newExperience] });
   };
@@ -105,29 +108,29 @@ export const CVForm = ({ onDataChange }: CVFormProps) => {
     updateData({ skills: cvData.skills.filter(skill => skill.id !== id) });
   };
 
-  const addDescriptionPoint = (experienceId: string) => {
+  const addArrayItem = (experienceId: string, field: 'responsibilities' | 'achievements' | 'technologies') => {
     const experience = cvData.experience.find(exp => exp.id === experienceId);
     if (experience) {
       updateExperience(experienceId, {
-        description: [...experience.description, '']
+        [field]: [...experience[field], '']
       });
     }
   };
 
-  const updateDescriptionPoint = (experienceId: string, index: number, value: string) => {
+  const updateArrayItem = (experienceId: string, field: 'responsibilities' | 'achievements' | 'technologies', index: number, value: string) => {
     const experience = cvData.experience.find(exp => exp.id === experienceId);
     if (experience) {
-      const newDescription = [...experience.description];
-      newDescription[index] = value;
-      updateExperience(experienceId, { description: newDescription });
+      const newArray = [...experience[field]];
+      newArray[index] = value;
+      updateExperience(experienceId, { [field]: newArray });
     }
   };
 
-  const removeDescriptionPoint = (experienceId: string, index: number) => {
+  const removeArrayItem = (experienceId: string, field: 'responsibilities' | 'achievements' | 'technologies', index: number) => {
     const experience = cvData.experience.find(exp => exp.id === experienceId);
-    if (experience && experience.description.length > 1) {
-      const newDescription = experience.description.filter((_, i) => i !== index);
-      updateExperience(experienceId, { description: newDescription });
+    if (experience && experience[field].length > 1) {
+      const newArray = experience[field].filter((_, i) => i !== index);
+      updateExperience(experienceId, { [field]: newArray });
     }
   };
 
@@ -310,36 +313,112 @@ export const CVForm = ({ onDataChange }: CVFormProps) => {
                   </Button>
                 </div>
                 
-                <div>
-                  <Label>Descrição das responsabilidades *</Label>
-                  {exp.description.map((desc, index) => (
-                    <div key={index} className="flex gap-2 mt-2">
-                      <Input
-                        value={desc}
-                        onChange={(e) => updateDescriptionPoint(exp.id, index, e.target.value)}
-                        placeholder="• Responsabilidade ou conquista..."
-                        className="flex-1"
-                      />
-                      {exp.description.length > 1 && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => removeDescriptionPoint(exp.id, index)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addDescriptionPoint(exp.id)}
-                    className="mt-2"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Adicionar ponto
-                  </Button>
+                <div className="space-y-4">
+                  <div>
+                    <Label>Desafio Principal *</Label>
+                    <Textarea
+                      value={exp.challenge}
+                      onChange={(e) => updateExperience(exp.id, { challenge: e.target.value })}
+                      placeholder="Descreva o principal desafio enfrentado nesta posição..."
+                      rows={2}
+                    />
+                  </div>
+
+                  <div>
+                    <Label>Responsabilidades *</Label>
+                    {exp.responsibilities.map((resp, index) => (
+                      <div key={index} className="flex gap-2 mt-2">
+                        <Input
+                          value={resp}
+                          onChange={(e) => updateArrayItem(exp.id, 'responsibilities', index, e.target.value)}
+                          placeholder="• Responsabilidade..."
+                          className="flex-1"
+                        />
+                        {exp.responsibilities.length > 1 && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeArrayItem(exp.id, 'responsibilities', index)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => addArrayItem(exp.id, 'responsibilities')}
+                      className="mt-2"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Adicionar responsabilidade
+                    </Button>
+                  </div>
+
+                  <div>
+                    <Label>Conquistas</Label>
+                    {exp.achievements.map((achievement, index) => (
+                      <div key={index} className="flex gap-2 mt-2">
+                        <Input
+                          value={achievement}
+                          onChange={(e) => updateArrayItem(exp.id, 'achievements', index, e.target.value)}
+                          placeholder="• Conquista ou resultado obtido..."
+                          className="flex-1"
+                        />
+                        {exp.achievements.length > 1 && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeArrayItem(exp.id, 'achievements', index)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => addArrayItem(exp.id, 'achievements')}
+                      className="mt-2"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Adicionar conquista
+                    </Button>
+                  </div>
+
+                  <div>
+                    <Label>Tecnologias Utilizadas</Label>
+                    {exp.technologies.map((tech, index) => (
+                      <div key={index} className="flex gap-2 mt-2">
+                        <Input
+                          value={tech}
+                          onChange={(e) => updateArrayItem(exp.id, 'technologies', index, e.target.value)}
+                          placeholder="• Tecnologia, framework ou ferramenta..."
+                          className="flex-1"
+                        />
+                        {exp.technologies.length > 1 && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeArrayItem(exp.id, 'technologies', index)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => addArrayItem(exp.id, 'technologies')}
+                      className="mt-2"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Adicionar tecnologia
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>

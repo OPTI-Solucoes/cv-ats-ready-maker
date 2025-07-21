@@ -99,13 +99,51 @@ export const CVPreview = ({ data }: CVPreviewProps) => {
                       </p>
                     </div>
                   </div>
-                  <ul className="list-disc list-inside space-y-1 text-cv-text">
-                    {exp.description.filter(desc => desc.trim()).map((desc, index) => (
-                      <li key={index} className="leading-relaxed">
-                        {desc.startsWith('•') ? desc.substring(1).trim() : desc}
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="space-y-3 text-cv-text">
+                    {exp.challenge && (
+                      <div>
+                        <h4 className="font-semibold text-cv-section text-sm mb-1">Desafio:</h4>
+                        <p className="leading-relaxed">{exp.challenge}</p>
+                      </div>
+                    )}
+                    
+                    {exp.responsibilities.filter(resp => resp.trim()).length > 0 && (
+                      <div>
+                        <h4 className="font-semibold text-cv-section text-sm mb-1">Responsabilidades:</h4>
+                        <ul className="list-disc list-inside space-y-1">
+                          {exp.responsibilities.filter(resp => resp.trim()).map((resp, index) => (
+                            <li key={index} className="leading-relaxed">
+                              {resp.startsWith('•') ? resp.substring(1).trim() : resp}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    {exp.achievements.filter(achievement => achievement.trim()).length > 0 && (
+                      <div>
+                        <h4 className="font-semibold text-cv-section text-sm mb-1">Conquistas:</h4>
+                        <ul className="list-disc list-inside space-y-1">
+                          {exp.achievements.filter(achievement => achievement.trim()).map((achievement, index) => (
+                            <li key={index} className="leading-relaxed">
+                              {achievement.startsWith('•') ? achievement.substring(1).trim() : achievement}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    {exp.technologies.filter(tech => tech.trim()).length > 0 && (
+                      <div>
+                        <h4 className="font-semibold text-cv-section text-sm mb-1">Tecnologias:</h4>
+                        <p className="leading-relaxed">
+                          {exp.technologies.filter(tech => tech.trim()).map(tech => 
+                            tech.startsWith('•') ? tech.substring(1).trim() : tech
+                          ).join(' • ')}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>

@@ -15,7 +15,10 @@ export interface Experience {
   startDate: string;
   endDate: string;
   current: boolean;
-  description: string[];
+  challenge: string;
+  responsibilities: string[];
+  achievements: string[];
+  technologies: string[];
 }
 
 export interface Education {
