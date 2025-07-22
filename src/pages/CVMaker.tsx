@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { CVForm } from '@/components/CVForm';
 import { CVPreview } from '@/components/CVPreview';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { CVData } from '@/types/cv';
-import { Download, FileText, Eye, Edit } from 'lucide-react';
+import { Download, FileText, Eye, Edit, MoreVertical, Upload, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const CVMaker = () => {
@@ -28,6 +29,7 @@ const CVMaker = () => {
     }
   });
   const [activeView, setActiveView] = useState<'form' | 'preview'>('form');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handlePrint = () => {
     // Verificar se dados essenciais estão preenchidos
@@ -49,11 +51,82 @@ const CVMaker = () => {
            cvData.summary;
   };
 
+  const handleExportJSON = () => {
+    const dataStr = JSON.stringify(cvData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `cv-${cvData.personalInfo.fullName || 'dados'}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Dados exportados",
+      description: "Os dados do CV foram exportados em formato JSON."
+    });
+  };
+
+  const handleImportJSON = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const importedData = JSON.parse(e.target?.result as string);
+        setCvData(importedData);
+        toast({
+          title: "Dados importados",
+          description: "Os dados do CV foram importados com sucesso."
+        });
+      } catch (error) {
+        toast({
+          title: "Erro na importação",
+          description: "Arquivo JSON inválido ou corrompido.",
+          variant: "destructive"
+        });
+      }
+    };
+    reader.readAsText(file);
+    
+    // Reset input value to allow selecting the same file again
+    event.target.value = '';
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="relative text-center mb-8">
+          {/* Dropdown Menu - Positioned in top right */}
+          <div className="absolute top-0 right-0">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="h-8 w-8 p-0">
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={handleExportJSON}>
+                  <Save className="mr-2 h-4 w-4" />
+                  Exportar dados JSON
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleImportJSON}>
+                  <Upload className="mr-2 h-4 w-4" />
+                  Importar dados JSON
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          
           <h1 className="text-4xl font-bold text-foreground mb-2">
             Gerador de CV Compatível com ATS
           </h1>
@@ -61,6 +134,15 @@ const CVMaker = () => {
             Crie um currículo profissional otimizado para sistemas de triagem automática
           </p>
         </div>
+
+        {/* Hidden file input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".json"
+          onChange={handleFileSelect}
+          className="hidden"
+        />
 
         {/* Navigation */}
         <div className="flex justify-center mb-6">
