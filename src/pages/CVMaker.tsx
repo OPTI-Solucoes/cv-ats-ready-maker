@@ -165,9 +165,9 @@ const CVMaker = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 print:pt-0 print:px-0">
         {/* Header */}
-        <div className="relative text-center mb-8">
+        <div className="relative text-center mb-8 print:hidden print:scale-0">
           {/* Dropdown Menu - Positioned in top right */}
           <div className="absolute top-0 right-0">
             <DropdownMenu>
@@ -207,7 +207,7 @@ const CVMaker = () => {
         />
 
         {/* Navigation */}
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center mb-6 print:hidden print:scale-0">
           <div className="flex gap-2 p-1 bg-muted rounded-lg">
             <Button
               variant={activeView === 'form' ? 'default' : 'ghost'}
@@ -230,7 +230,7 @@ const CVMaker = () => {
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
           {/* Form Section */}
-          <div className={`${activeView === 'preview' ? 'hidden xl:block' : ''}`}>
+          <div className={`${activeView === 'preview' ? 'hidden xl:block' : ''} print:hidden print:scale-0`}>
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -245,7 +245,7 @@ const CVMaker = () => {
           </div>
 
           {/* Preview Section */}
-          <div className={`${activeView === 'form' ? 'hidden xl:block' : ''}`}>
+          <div className={`${activeView === 'form' ? 'hidden xl:block' : ''} print:block`}>
             <div className="sticky top-8">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold">Pré-visualização</h2>
