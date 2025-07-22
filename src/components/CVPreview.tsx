@@ -7,7 +7,6 @@ interface CVPreviewProps {
 }
 
 export const CVPreview = ({ data }: CVPreviewProps) => {
-  console.log(data);
   const formatDate = (dateStr: string) => {
     if (!dateStr) return '';
     const [year, month] = dateStr.split('-');
