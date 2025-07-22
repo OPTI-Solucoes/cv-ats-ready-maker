@@ -40,55 +40,7 @@ const CVMaker = () => {
       return;
     }
 
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) return;
-
-    const cvContent = document.getElementById('cv-content');
-    if (!cvContent) return;
-
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>CV - ${cvData.personalInfo.fullName}</title>
-          <style>
-            * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-            .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-            h1 { font-size: 28px; margin-bottom: 10px; text-align: center; }
-            h2 { font-size: 18px; margin: 20px 0 10px 0; text-transform: uppercase; font-weight: bold; border-bottom: 2px solid #e5e7eb; padding-bottom: 5px; }
-            h3 { font-size: 16px; margin: 10px 0 5px 0; font-weight: 600; }
-            p { margin: 5px 0; }
-            ul { margin: 10px 0; padding-left: 20px; }
-            li { margin: 5px 0; }
-            .header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #e5e7eb; }
-            .contact-info { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 10px; font-size: 14px; }
-            .section { margin-bottom: 25px; }
-            .experience-item, .education-item { margin-bottom: 20px; padding-left: 15px; border-left: 2px solid #e5e7eb; }
-            .date { font-size: 14px; color: #666; }
-            .skills { line-height: 1.8; }
-            @media print {
-              body { font-size: 12px; }
-              .container { padding: 0; }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            ${cvContent.innerHTML}
-          </div>
-        </body>
-      </html>
-    `);
-
-    printWindow.document.close();
-    printWindow.focus();
-    printWindow.print();
-    printWindow.close();
-
-    toast({
-      title: "CV pronto para impressão",
-      description: "Seu currículo foi aberto em uma nova janela para download/impressão."
-    });
+    window.print();
   };
 
   const isDataValid = () => {
