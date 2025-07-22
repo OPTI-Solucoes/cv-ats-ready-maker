@@ -20,8 +20,9 @@ export const CVPreview = ({ data }: CVPreviewProps) => {
 
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <div className="p-8 bg-white" id="cv-content">
+    <div data-cv-preview>
+      <Card className="w-full max-w-4xl mx-auto cv-container">
+        <div className="p-8 bg-white cv-section" id="cv-content">
         {/* Header */}
         <div className="text-center mb-8 pb-6 border-b-2 border-cv-border">
           <h1 className="text-3xl font-bold text-cv-section mb-2">
@@ -210,7 +211,8 @@ export const CVPreview = ({ data }: CVPreviewProps) => {
             </div>
           </div>
         )}
-      </div>
-    </Card>
+        </div>
+      </Card>
+    </div>
   );
 };
