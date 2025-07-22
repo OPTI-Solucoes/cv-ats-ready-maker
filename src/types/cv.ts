@@ -18,7 +18,7 @@ export interface Experience {
   challenge: string;
   responsibilities: string[];
   achievements: string[];
-  technologies: string[];
+  technologies: string;
 }
 
 export interface Education {

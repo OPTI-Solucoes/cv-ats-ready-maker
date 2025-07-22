@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
-import { CVData, Experience, Education, SkillCategory } from '@/types/cv';
+import { CVData, Experience, Education } from '@/types/cv';
 import { Plus, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -53,7 +53,7 @@ export const CVForm = ({ onDataChange }: CVFormProps) => {
       challenge: '',
       responsibilities: [''],
       achievements: [''],
-      technologies: ['']
+      technologies: ''
     };
     updateData({ experience: [...cvData.experience, newExperience] });
   };
@@ -93,7 +93,7 @@ export const CVForm = ({ onDataChange }: CVFormProps) => {
   };
 
 
-  const addArrayItem = (experienceId: string, field: 'responsibilities' | 'achievements' | 'technologies') => {
+  const addArrayItem = (experienceId: string, field: 'responsibilities' | 'achievements') => {
     const experience = cvData.experience.find(exp => exp.id === experienceId);
     if (experience) {
       updateExperience(experienceId, {
@@ -102,7 +102,7 @@ export const CVForm = ({ onDataChange }: CVFormProps) => {
     }
   };
 
-  const updateArrayItem = (experienceId: string, field: 'responsibilities' | 'achievements' | 'technologies', index: number, value: string) => {
+  const updateArrayItem = (experienceId: string, field: 'responsibilities' | 'achievements', index: number, value: string) => {
     const experience = cvData.experience.find(exp => exp.id === experienceId);
     if (experience) {
       const newArray = [...experience[field]];
@@ -111,7 +111,7 @@ export const CVForm = ({ onDataChange }: CVFormProps) => {
     }
   };
 
-  const removeArrayItem = (experienceId: string, field: 'responsibilities' | 'achievements' | 'technologies', index: number) => {
+  const removeArrayItem = (experienceId: string, field: 'responsibilities' | 'achievements', index: number) => {
     const experience = cvData.experience.find(exp => exp.id === experienceId);
     if (experience && experience[field].length > 1) {
       const newArray = experience[field].filter((_, i) => i !== index);
@@ -374,35 +374,25 @@ export const CVForm = ({ onDataChange }: CVFormProps) => {
                   </div>
 
                   <div>
-                    <Label>Tecnologias Utilizadas</Label>
-                    {exp.technologies.map((tech, index) => (
-                      <div key={index} className="flex gap-2 mt-2">
-                        <Input
-                          value={tech}
-                          onChange={(e) => updateArrayItem(exp.id, 'technologies', index, e.target.value)}
-                          placeholder="• Tecnologia, framework ou ferramenta..."
-                          className="flex-1"
-                        />
-                        {exp.technologies.length > 1 && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => removeArrayItem(exp.id, 'technologies', index)}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        )}
+                    <Label htmlFor={`technical-experience-${exp.id}`}>Tecnologias utilizadas</Label>
+                    <Input
+                      id={`technical-experience-${exp.id}`}
+                      value={exp.technologies}
+                      onChange={(e) => updateExperience(exp.id, { technologies: e.target.value })}
+                      placeholder="Tecnologia, Framework, outras ferramentas (separadas por vírgula)"
+                    />
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Separe as tecnologias por vírgula. Ex: Kanban, React, JavaScript, TDD
+                    </p>
+                    {exp.technologies && (
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {exp.technologies.split(',').map((skill, index) => (
+                          <span key={index} className="bg-primary/10 text-primary px-2 py-1 rounded-md text-sm">
+                            {skill.trim()}
+                          </span>
+                        ))}
                       </div>
-                    ))}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => addArrayItem(exp.id, 'technologies')}
-                      className="mt-2"
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Adicionar tecnologia
-                    </Button>
+                    )}
                   </div>
                 </div>
               </CardContent>

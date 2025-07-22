@@ -7,6 +7,7 @@ interface CVPreviewProps {
 }
 
 export const CVPreview = ({ data }: CVPreviewProps) => {
+  console.log(data);
   const formatDate = (dateStr: string) => {
     if (!dateStr) return '';
     const [year, month] = dateStr.split('-');
@@ -127,12 +128,12 @@ export const CVPreview = ({ data }: CVPreviewProps) => {
                         </ul>
                       </div>
                     )}
-                    
-                    {exp.technologies.filter(tech => tech.trim()).length > 0 && (
+              
+                    {exp.technologies.split(',').filter(tech => tech.trim()).length > 0 && (
                       <div>
                         <h4 className="font-semibold text-cv-section text-sm mb-1">Tecnologias:</h4>
                         <p className="leading-relaxed">
-                          {exp.technologies.filter(tech => tech.trim()).map(tech => 
+                          {exp.technologies.split(',').filter(tech => tech.trim()).map(tech => 
                             tech.startsWith('•') ? tech.substring(1).trim() : tech
                           ).join(' • ')}
                         </p>
