@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,11 +12,12 @@ import { useToast } from '@/hooks/use-toast';
 
 interface CVFormProps {
   onDataChange: (data: CVData) => void;
+  initialData?: CVData;
 }
 
-export const CVForm = ({ onDataChange }: CVFormProps) => {
+export const CVForm = ({ onDataChange, initialData }: CVFormProps) => {
   const { toast } = useToast();
-  const [cvData, setCvData] = useState<CVData>({
+  const [cvData, setCvData] = useState<CVData>(initialData || {
     personalInfo: {
       fullName: '',
       email: '',
@@ -34,6 +35,13 @@ export const CVForm = ({ onDataChange }: CVFormProps) => {
       language: ''
     }
   });
+
+  useEffect(() => {
+    if (initialData) {
+      setCvData(initialData);
+      onDataChange(initialData);
+    }
+  }, [initialData]);
 
   const updateData = (newData: Partial<CVData>) => {
     const updatedData = { ...cvData, ...newData };

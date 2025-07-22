@@ -4,8 +4,9 @@ import { CVPreview } from '@/components/CVPreview';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { CVData } from '@/types/cv';
-import { Download, FileText, Eye, Edit, MoreVertical, Upload, Save } from 'lucide-react';
+import { Download, FileText, Eye, Edit, MoreVertical, Upload, Save, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const CVMaker = () => {
@@ -29,6 +30,8 @@ const CVMaker = () => {
     }
   });
   const [activeView, setActiveView] = useState<'form' | 'preview'>('form');
+  const [pendingImportData, setPendingImportData] = useState<CVData | null>(null);
+  const [showImportDialog, setShowImportDialog] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handlePrint = () => {
@@ -74,6 +77,17 @@ const CVMaker = () => {
     fileInputRef.current?.click();
   };
 
+  const hasExistingData = () => {
+    return cvData.personalInfo.fullName || 
+           cvData.personalInfo.email || 
+           cvData.summary || 
+           cvData.experience.length > 0 || 
+           cvData.education.length > 0 ||
+           cvData.skills.technical ||
+           cvData.skills.soft ||
+           cvData.skills.language;
+  };
+
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -82,11 +96,17 @@ const CVMaker = () => {
     reader.onload = (e) => {
       try {
         const importedData = JSON.parse(e.target?.result as string);
-        setCvData(importedData);
-        toast({
-          title: "Dados importados",
-          description: "Os dados do CV foram importados com sucesso."
-        });
+        
+        if (hasExistingData()) {
+          setPendingImportData(importedData);
+          setShowImportDialog(true);
+        } else {
+          setCvData(importedData);
+          toast({
+            title: "Dados importados",
+            description: "Os dados do CV foram importados com sucesso."
+          });
+        }
       } catch (error) {
         toast({
           title: "Erro na importação",
@@ -99,6 +119,48 @@ const CVMaker = () => {
     
     // Reset input value to allow selecting the same file again
     event.target.value = '';
+  };
+
+  const handleOverwriteImport = () => {
+    if (pendingImportData) {
+      setCvData(pendingImportData);
+      toast({
+        title: "Dados sobrescritos",
+        description: "Todos os dados anteriores foram substituídos pelos dados importados."
+      });
+    }
+    setShowImportDialog(false);
+    setPendingImportData(null);
+  };
+
+  const handleMergeImport = () => {
+    if (pendingImportData) {
+      const mergedData: CVData = {
+        personalInfo: {
+          fullName: pendingImportData.personalInfo.fullName || cvData.personalInfo.fullName,
+          email: pendingImportData.personalInfo.email || cvData.personalInfo.email,
+          phone: pendingImportData.personalInfo.phone || cvData.personalInfo.phone,
+          location: pendingImportData.personalInfo.location || cvData.personalInfo.location,
+          linkedIn: pendingImportData.personalInfo.linkedIn || cvData.personalInfo.linkedIn,
+          website: pendingImportData.personalInfo.website || cvData.personalInfo.website,
+        },
+        summary: pendingImportData.summary || cvData.summary,
+        experience: [...cvData.experience, ...pendingImportData.experience],
+        education: [...cvData.education, ...pendingImportData.education],
+        skills: {
+          technical: [cvData.skills.technical, pendingImportData.skills.technical].filter(Boolean).join(', '),
+          soft: [cvData.skills.soft, pendingImportData.skills.soft].filter(Boolean).join(', '),
+          language: [cvData.skills.language, pendingImportData.skills.language].filter(Boolean).join(', '),
+        }
+      };
+      setCvData(mergedData);
+      toast({
+        title: "Dados mesclados",
+        description: "Os dados foram combinados mantendo as informações existentes."
+      });
+    }
+    setShowImportDialog(false);
+    setPendingImportData(null);
   };
 
   return (
@@ -177,7 +239,7 @@ const CVMaker = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <CVForm onDataChange={setCvData} />
+                <CVForm onDataChange={setCvData} initialData={cvData} />
               </CardContent>
             </Card>
           </div>
@@ -243,6 +305,32 @@ const CVMaker = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Import Confirmation Dialog */}
+        <AlertDialog open={showImportDialog} onOpenChange={setShowImportDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle className="flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5 text-amber-500" />
+                Dados existentes detectados
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                Você já possui informações preenchidas no formulário. Como deseja proceder com a importação?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+              <AlertDialogCancel onClick={() => setShowImportDialog(false)}>
+                Cancelar
+              </AlertDialogCancel>
+              <Button variant="outline" onClick={handleMergeImport}>
+                Mesclar dados
+              </Button>
+              <AlertDialogAction onClick={handleOverwriteImport}>
+                Sobrescrever tudo
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
