@@ -28,7 +28,7 @@ export const CVPreview = ({ data }: CVPreviewProps) => {
             {data.personalInfo.fullName || 'Seu Nome'}
           </h1>
           
-          <div className="flex flex-wrap justify-center gap-4 text-sm text-cv-text">
+          <div className="flex flex-wrap justify-center gap-4 gap-y-1 text-sm text-cv-text">
             {data.personalInfo.email && (
               <div className="flex items-center gap-1">
                 <Mail className="w-4 h-4" />
